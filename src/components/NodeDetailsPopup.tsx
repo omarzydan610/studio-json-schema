@@ -1,10 +1,13 @@
 import { BsX } from "react-icons/bs";
+import { type NodeData } from "../utils/processAST";
 
 const NodeDetailsPopup = ({
   data,
   onClose,
 }: {
-  data: Record<string, unknown>;
+  data: {
+    nodeData?: NodeData;
+  };
   onClose: () => void;
 }) => {
   const formatValue = (value: string | string[]) => {
@@ -45,21 +48,19 @@ const NodeDetailsPopup = ({
               </tr>
             </thead>
             <tbody>
-              {(data.nodeData as Record<string, unknown>) &&
-                Object.entries(data.nodeData as Record<string, unknown>).map(
-                  ([key, value]) => (
-                    <tr key={key} className="border-b border-gray-200">
-                      <td className="p-2 font-medium text-gray-800 whitespace-nowrap">
-                        {key}
-                      </td>
-                      <td className="p-2 text-gray-700">
-                        <div className="max-h-[150px] overflow-auto pr-1">
-                          {formatValue(value as string)}
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                )}
+              {data.nodeData &&
+                Object.entries(data.nodeData).map(([key, keyData]) => (
+                  <tr key={key} className="border-b border-gray-200">
+                    <td className="p-2 font-medium text-gray-800 whitespace-nowrap">
+                      {key}
+                    </td>
+                    <td className="p-2 text-gray-700">
+                      <div className="max-h-[150px] overflow-auto pr-1">
+                        {formatValue(keyData.value as string)}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

@@ -51,7 +51,7 @@ export const inferSchemaType = (nodeData: GraphNode["data"]["nodeData"]): [strin
         return value ? "booleanSchemaTrue" : "booleanSchemaFalse";
     }
 
-    if ("booleanSchema" in nodeData) return ["booleanSchema", getBooleanSchemaValue(nodeData["booleanSchema"] as string)];
+    if ("booleanSchema" in nodeData) return ["booleanSchema", getBooleanSchemaValue(nodeData.booleanSchema.value as string)];
     if (hasAnyKeyword(objectKeywords)) return ["objectSchema", "object"];
     if (hasAnyKeyword(arrayKeywords)) return ["objectSchema", "array"];
     if (hasAnyKeyword(stringKeywords)) return ["objectSchema", "string"];

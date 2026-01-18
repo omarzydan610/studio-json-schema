@@ -15,7 +15,7 @@ export type HandleConfig = {
     position: Position;
 }
 
-type NodeData = Record<string, { value: unknown, ellipsis?: "{...}" }>;
+export type NodeData = Record<string, { value: unknown, ellipsis?: "{...}" }>;
 
 export type RFNodeData = {
     nodeLabel: string,
@@ -132,7 +132,9 @@ export const processAST: ProcessAST = ({ ast, schemaUri, nodes, edges, parentId,
     });
 
     if (typeof schemaNodes === "boolean") {
-        nodeData["booleanSchema"] = schemaNodes;
+        nodeData.booleanSchema = {
+            value: schemaNodes
+        }
     } else {
         for (const [keywordHandlerName, , keywordValue] of schemaNodes) {
             const handler = getKeywordHandler(toAbsoluteIri(keywordHandlerName));
