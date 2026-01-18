@@ -47,9 +47,9 @@
         "zip": {
           "description": "six digit zip code",
           "type": "number"
-        },
-        "additionalProperties": false
+        }
       },
+      "additionalProperties": false,
       "required": [
         "city",
         "zip"
