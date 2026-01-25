@@ -150,20 +150,22 @@ const GraphView = ({
   );
 
   useEffect(() => {
-    const result = generateNodesAndEdges(compiledSchema);
-    if (!result) return;
+    try {
+      const result = generateNodesAndEdges(compiledSchema);
+      if (!result) return;
 
-    const { nodes: rawNodes, edges: rawEdges } = result;
-    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-      rawNodes,
-      rawEdges
-    );
+      const { nodes: rawNodes, edges: rawEdges } = result;
+      const { nodes: layoutedNodes, edges: layoutedEdges } =
+        getLayoutedElements(rawNodes, rawEdges);
 
-    setNodes(layoutedNodes);
-    setEdges(layoutedEdges);
+      setNodes(layoutedNodes);
+      setEdges(layoutedEdges);
 
-    // important: reset collision flag when schema changes
-    setCollisionResolved(false);
+      // important: reset collision flag when schema changes
+      setCollisionResolved(false);
+    } catch (err) {
+      console.error("Error generating visualization graph: ", err);
+    }
   }, [
     compiledSchema,
     generateNodesAndEdges,

@@ -420,13 +420,11 @@ const keywordHandlerMap: KeywordHandlerMap = {
 
     // Unevaluated
     "https://json-schema.org/keyword/unevaluatedProperties": (ast, keywordValue, nodes, edges, parentId, nodeDepth, renderedNodes) => {
-        const value = keywordValue as string[];
-        processAST({ ast, schemaUri: value[1], nodes, edges, parentId, childId: "unevaluatedProperties", renderedNodes, nodeTitle: "unevaluatedProperties", nodeDepth });
-        return { key: "unevaluatedProperties", data: { value: value[1] } }
+        processAST({ ast, schemaUri: keywordValue as string, nodes, edges, parentId, childId: "unevaluatedProperties", renderedNodes, nodeTitle: "unevaluatedProperties", nodeDepth });
+        return { key: "unevaluatedProperties", data: { value: keywordValue, ellipsis: "{ ... }" } }
     },
     "https://json-schema.org/keyword/unevaluatedItems": (ast, keywordValue, nodes, edges, parentId, nodeDepth, renderedNodes) => {
-        const value = keywordValue as string[];
-        processAST({ ast, schemaUri: value[1], nodes, edges, parentId, childId: "unevaluatedItems", renderedNodes, nodeTitle: "unevaluatedItems", nodeDepth });
-        return { key: "unevaluatedItems", data: { value: value[1] } }
+        processAST({ ast, schemaUri: keywordValue as string, nodes, edges, parentId, childId: "unevaluatedItems", renderedNodes, nodeTitle: "unevaluatedItems", nodeDepth });
+        return { key: "unevaluatedItems", data: { value: keywordValue, ellipsis: "{ ... }" } }
     }
 };
