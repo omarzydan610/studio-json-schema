@@ -120,7 +120,7 @@ const MonacoEditor = () => {
       try {
         // INFO: parsedSchema is mutated by buildSchemaDocument function
         const parsedSchema = parseSchema(schemaText, schemaFormat);
-        const copy = Object.assign({}, parsedSchema);
+        const copy = structuredClone(parsedSchema);
 
         const dialect = parsedSchema.$schema;
         const dialectVersion = dialect ?? DEFAULT_SCHEMA_DIALECT;
