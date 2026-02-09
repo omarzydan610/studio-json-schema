@@ -330,6 +330,7 @@ const GraphView = ({
 
       {expandedNode && (
         <NodeDetailsPopup
+          nodeId={expandedNode.nodeId}
           data={expandedNode.data}
           onClose={() => setExpandedNode(null)}
         />
