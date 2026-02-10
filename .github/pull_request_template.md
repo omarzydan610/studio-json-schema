@@ -2,18 +2,15 @@
 
 <!-- Brief description of what this PR does -->
 
-## Type of Change
+## What kind of change does this PR introduce
 
 <!-- What kind of change is this? -->
 
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Breaking change
-- [ ] Documentation update
-
 ## Issue Number
 
-Closes #<!-- Add issue number here -->
+<!-- Add issue number here -->
+
+Closes #
 
 ## Screenshots/Video
 
