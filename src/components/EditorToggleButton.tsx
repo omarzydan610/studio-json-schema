@@ -20,6 +20,8 @@ const EditorToggleButton = () => {
                         shadow-md
                         border border-gray-300/40
                         hover:scale-105
+                        opacity-80 
+                        hover:opacity-100
                         hover:shadow-lg
                         hover:ring-2 hover:ring-blue-500
                         active:scale-95

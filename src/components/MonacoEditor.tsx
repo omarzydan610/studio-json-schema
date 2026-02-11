@@ -95,6 +95,8 @@ const MonacoEditor = () => {
   } = useContext(AppContext);
 
   const editorPanelRef = useRef<any>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
 
   const [compiledSchema, setCompiledSchema] =
     useState<CompiledSchema | null>(null);
@@ -117,11 +119,19 @@ const MonacoEditor = () => {
   useEffect(() => {
     if (!editorPanelRef.current) return;
 
+    wrapperRef.current?.classList.add("panel-animating");
+
     if (isEditorVisible) {
       editorPanelRef.current.resize(25);
     } else {
       editorPanelRef.current.resize(0);
     }
+
+    // Remove transition class after animation completes
+    const timer = setTimeout(() => {
+      wrapperRef.current?.classList.remove("panel-animating");
+    }, 310);
+    return () => clearTimeout(timer);
   }, [isEditorVisible]);
 
   useEffect(() => {
@@ -204,7 +214,7 @@ const MonacoEditor = () => {
   }, [schemaText, schemaFormat]);
 
   return (
-    <div ref={containerRef} className="h-[92vh] flex flex-col">
+    <div ref={(el) => { wrapperRef.current = el; if (typeof containerRef === 'function') containerRef(el); else if (containerRef) (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = el; }} className="h-[92vh] flex flex-col">
       {isFullScreen && (
         <div className="w-full px-1 bg-[var(--view-bg-color)]">
           <div className="text-[var(--view-text-color)]">
@@ -245,7 +255,7 @@ const MonacoEditor = () => {
 
         {/* RESIZE HANDLE with Toggle Button */}
         <PanelResizeHandle className="w-[1px] bg-gray-400 relative">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 z-10">
             <EditorToggleButton />
           </div>
         </PanelResizeHandle>
