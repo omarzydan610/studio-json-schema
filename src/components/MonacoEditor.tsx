@@ -1,4 +1,5 @@
 import { useContext, useState, useEffect } from "react";
+import { BsCopy, BsCheck } from "react-icons/bs";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 // INFO: modifying the following import statement to (import type { SchemaObject } from "@hyperjump/json-schema/draft-2020-12") creates error;
 import { type SchemaObject } from "@hyperjump/json-schema/draft-2020-12";
@@ -87,6 +88,7 @@ const MonacoEditor = () => {
   const [compiledSchema, setCompiledSchema] = useState<CompiledSchema | null>(
     null
   );
+  const [schemaCopied, setSchemaCopied] = useState(false);
 
   const initialSchemaJSON = loadSchemaJSON(SESSION_SCHEMA_KEY);
 
@@ -178,6 +180,12 @@ const MonacoEditor = () => {
     return () => clearTimeout(timeout);
   }, [schemaText, schemaFormat]);
 
+  const copySchema = () => {
+    navigator.clipboard.writeText(schemaText);
+    setSchemaCopied(true);
+    setTimeout(() => setSchemaCopied(false), 2000);
+  };
+
   return (
     <div ref={containerRef} className="h-[92vh] flex flex-col">
       {isFullScreen && (
@@ -188,7 +196,18 @@ const MonacoEditor = () => {
         </div>
       )}
       <PanelGroup direction="horizontal">
-        <Panel className="flex flex-col" minSize={10} defaultSize={25}>
+        <Panel className="flex flex-col relative" minSize={10} defaultSize={25}>
+          <button
+            onClick={copySchema}
+            className="absolute top-3 right-5 z-10 p-2.5 rounded-full bg-[var(--bg-color)] border border-gray-400 text-[var(--text-color)] hover:bg-[var(--view-bg-color)]"
+            title="Copy schema to clipboard"
+          >
+            {schemaCopied ? (
+              <BsCheck size={16} className="text-green-600" />
+            ) : (
+              <BsCopy size={16} />
+            )}
+          </button>
           <Editor
             height="90%"
             width="100%"
