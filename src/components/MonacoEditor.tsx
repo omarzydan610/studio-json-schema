@@ -124,7 +124,7 @@ const MonacoEditor = () => {
     if (isEditorVisible) {
       editorPanelRef.current.resize(25);
     } else {
-      editorPanelRef.current.resize(0);
+      editorPanelRef.current.resize(2);
     }
 
     // Remove transition class after animation completes
