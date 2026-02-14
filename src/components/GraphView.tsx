@@ -37,7 +37,7 @@ const GraphView = ({
 }: {
   compiledSchema: CompiledSchema | null;
 }) => {
-  const { setSelectedNodeId } = useContext(AppContext);
+  const { setSelectedNodeId, selectedNodeId } = useContext(AppContext);
   const [expandedNode, setExpandedNode] = useState<{
     nodeId: string;
     data: Record<string, unknown>;
@@ -212,6 +212,10 @@ const GraphView = ({
         maxZoom={5}
         onEdgeMouseEnter={(_, edge) => setHoveredEdgeId(edge.id)}
         onEdgeMouseLeave={() => setHoveredEdgeId(null)}
+        onPaneClick={() => {
+          setSelectedNodeId(null);
+          setExpandedNode(null);
+        }}
       >
         <Background
           id="main-grid"
@@ -234,7 +238,10 @@ const GraphView = ({
       {expandedNode && (
         <NodeDetailsPopup
           data={expandedNode.data}
-          onClose={() => setExpandedNode(null)}
+          onClose={() => {
+            setExpandedNode(null);
+            setSelectedNodeId(null);
+          }}
         />
       )}
     </div>
