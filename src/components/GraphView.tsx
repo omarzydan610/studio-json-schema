@@ -37,7 +37,7 @@ const GraphView = ({
 }: {
   compiledSchema: CompiledSchema | null;
 }) => {
-  const { setSelectedNodeId, selectedNodeId } = useContext(AppContext);
+  const { setSelectedNodeId } = useContext(AppContext);
   const [expandedNode, setExpandedNode] = useState<{
     nodeId: string;
     data: Record<string, unknown>;
@@ -54,7 +54,7 @@ const GraphView = ({
       nodeId: node.id,
       data: node.data,
     });
-  }, []);
+  }, [setSelectedNodeId]);
 
   const generateNodesAndEdges = useCallback(
     (
@@ -118,26 +118,12 @@ const GraphView = ({
     []
   );
 
-  // TODO: check if the following approach to bringing the selected edge to the top has any significant performance issues
-  // check if logic can be optimised
-  const orderedEdges = useMemo(() => {
-    const normal: typeof edges = [];
-    const selected: typeof edges = [];
-
-    for (const edge of edges) {
-      if (edge.selected) selected.push(edge);
-      else normal.push(edge);
-    }
-
-    return [...normal, ...selected];
-  }, [edges]);
-
   const animatedEdges = useMemo(
     () =>
-      orderedEdges.map((edge) => {
+      edges.map((edge) => {
         const isHovered = edge.id === hoveredEdgeId;
-        const isSelected = edge.selected;
-        const isActive = isHovered || isSelected;
+        // Only highlight on hover, ignore selection as per user request
+        const isActive = isHovered;
         const strokeColor = isActive ? edge.data.color : "#666";
         const strokeWidth = isActive ? 2.5 : 1;
         return {
@@ -150,7 +136,7 @@ const GraphView = ({
           },
         };
       }),
-    [orderedEdges, hoveredEdgeId]
+    [edges, hoveredEdgeId]
   );
 
   useEffect(() => {
@@ -233,7 +219,6 @@ const GraphView = ({
         />
         <Controls />
       </ReactFlow>
-
 
       {expandedNode && (
         <NodeDetailsPopup
