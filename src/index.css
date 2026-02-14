@@ -1,12 +1,1 @@
 @import "tailwindcss";
-
-.monaco-highlight-line {
-    background-color: rgba(255, 255, 0, 0.3);
-    /* Transparent yellow */
-    width: 100% !important;
-}
-
-[data-theme='dark'] .monaco-highlight-line {
-    background-color: rgba(255, 255, 0, 0.1);
-    /* Lighter yellow for dark mode */
-}

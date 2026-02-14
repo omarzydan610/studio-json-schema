@@ -25,6 +25,9 @@
   --dropdown-text-color: #444444;
   --view-text-color: #6b7280;
   --validation-text-color: #444444;
+
+  /* Monaco Editor Highlight */
+  --monaco-highlight-bg: rgba(255, 255, 0, 0.3);
 }
 
 [data-theme="dark"] {
@@ -54,4 +57,12 @@
   --dropdown-text-color: #ffffff;
   --view-text-color: #fff;
   --validation-text-color: #fff;
+
+  /* Monaco Editor Highlight */
+  --monaco-highlight-bg: rgba(255, 255, 0, 0.1);
+}
+
+.monaco-highlight-line {
+  background-color: var(--monaco-highlight-bg);
+  width: 100% !important;
 }
