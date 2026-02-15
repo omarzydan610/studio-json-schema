@@ -321,11 +321,7 @@ const GraphView = ({
         maxZoom={5}
         onEdgeMouseEnter={(_, edge) => setHoveredEdgeId(edge.id)}
         onEdgeMouseLeave={() => setHoveredEdgeId(null)}
-        onPaneClick={() => {
-          // React Flow auto-deselects edges on pane click. 
-          // We only need to handle closing popup.
-          setExpandedNode(null);
-        }}
+        onPaneClick={() => setExpandedNode(null)}
       >
         <Background
           id="main-grid"
