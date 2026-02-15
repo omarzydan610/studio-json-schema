@@ -1,7 +1,5 @@
 import { BsX } from "react-icons/bs";
-import { useContext } from "react";
 import { type NodeData } from "../utils/processAST";
-import { AppContext } from "../contexts/AppContext";
 
 const NodeDetailsPopup = ({
   data,
@@ -12,7 +10,6 @@ const NodeDetailsPopup = ({
   };
   onClose: () => void;
 }) => {
-  const { theme } = useContext(AppContext);
   const formatValue = (value: string | string[]) => {
     return (
       <div className="flex flex-col">
