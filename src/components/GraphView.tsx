@@ -95,6 +95,17 @@ const GraphView = ({
       nodeId: node.id,
       data: node.data,
     });
+
+    // Select connected edges programmatically to allow native selection handling
+    setEdges((eds) =>
+      eds.map((edge) => {
+        const isConnected = edge.source === node.id || edge.target === node.id;
+        return {
+          ...edge,
+          selected: isConnected
+        };
+      })
+    );
   }, []);
 
   const generateNodesAndEdges = useCallback(
@@ -310,6 +321,7 @@ const GraphView = ({
         maxZoom={5}
         onEdgeMouseEnter={(_, edge) => setHoveredEdgeId(edge.id)}
         onEdgeMouseLeave={() => setHoveredEdgeId(null)}
+        onPaneClick={() => setExpandedNode(null)}
       >
         <Background
           id="main-grid"
