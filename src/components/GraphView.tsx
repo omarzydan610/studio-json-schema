@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useMemo } from "react";
+import { useCallback, useEffect, useState, useMemo, useRef } from "react";
 import type { CompiledSchema } from "@hyperjump/json-schema/experimental";
 import "@xyflow/react/dist/style.css";
 import dagre from "@dagrejs/dagre";
@@ -39,7 +39,28 @@ const GraphView = ({
 }: {
   compiledSchema: CompiledSchema | null;
 }) => {
-  const { setCenter, getZoom } = useReactFlow();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { setCenter, getZoom, fitView } = useReactFlow();
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    const observer = new ResizeObserver(() => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        fitView({ duration: 300, padding: 0.05 });
+      }, 100);
+    });
+
+    observer.observe(containerRef.current);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(timeoutId);
+    };
+  }, [fitView]);
   const [expandedNode, setExpandedNode] = useState<{
     nodeId: string;
     data: Record<string, unknown>;
@@ -307,7 +328,7 @@ const GraphView = ({
   }, [searchString, nodes]);
 
   return (
-    <div className="relative w-full h-full">
+    <div ref={containerRef} className="relative w-full h-full">
       <ReactFlow
         nodes={nodes}
         edges={animatedEdges}
