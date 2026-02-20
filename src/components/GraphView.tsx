@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState, useMemo } from "react";
+import { useCallback, useEffect, useState, useMemo, useContext } from "react";
+import { AppContext } from "../contexts/AppContext";
 import type { CompiledSchema } from "@hyperjump/json-schema/experimental";
 import "@xyflow/react/dist/style.css";
 import dagre from "@dagrejs/dagre";
@@ -16,6 +17,7 @@ import {
 
 import CustomNode from "./CustomReactFlowNode";
 import NodeDetailsPopup from "./NodeDetailsPopup";
+
 import {
   processAST,
   type GraphEdge,
@@ -39,11 +41,8 @@ const GraphView = ({
 }: {
   compiledSchema: CompiledSchema | null;
 }) => {
+  const { selectedNode, setSelectedNode } = useContext(AppContext);
   const { setCenter, getZoom } = useReactFlow();
-  const [expandedNode, setExpandedNode] = useState<{
-    nodeId: string;
-    data: Record<string, unknown>;
-  } | null>(null);
 
   const [nodes, setNodes, onNodeChange] = useNodesState<GraphNode>([]);
   const [edges, setEdges, onEdgeChange] = useEdgesState<GraphEdge>([]);
@@ -91,18 +90,17 @@ const GraphView = ({
   }, []);
 
   const onNodeClick: NodeMouseHandler = useCallback((_event, node) => {
-    setExpandedNode({
-      nodeId: node.id,
+    setSelectedNode({
+      id: node.id,
       data: node.data,
     });
-
     // Select connected edges programmatically to allow native selection handling
     setEdges((eds) =>
       eds.map((edge) => {
         const isConnected = edge.source === node.id || edge.target === node.id;
         return {
           ...edge,
-          selected: isConnected
+          selected: isConnected,
         };
       })
     );
@@ -321,7 +319,9 @@ const GraphView = ({
         maxZoom={5}
         onEdgeMouseEnter={(_, edge) => setHoveredEdgeId(edge.id)}
         onEdgeMouseLeave={() => setHoveredEdgeId(null)}
-        onPaneClick={() => setExpandedNode(null)}
+        onPaneClick={() => {
+          setSelectedNode(null);
+        }}
       >
         <Background
           id="main-grid"
@@ -340,10 +340,12 @@ const GraphView = ({
         <Controls />
       </ReactFlow>
 
-      {expandedNode && (
+      {selectedNode && (
         <NodeDetailsPopup
-          data={expandedNode.data}
-          onClose={() => setExpandedNode(null)}
+          data={selectedNode.data}
+          onClose={() => {
+            setSelectedNode(null);
+          }}
         />
       )}
       {/*Error Message */}
