@@ -15,17 +15,14 @@ const NodeDetailsPopup = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
-  const formatRoute = (nodeId: string) => {
+  const extractPath = (nodeId: string) => {
     const hashIndex = nodeId.indexOf("#");
-    const pathPart = hashIndex !== -1 ? nodeId.substring(hashIndex + 1) : nodeId;
-    
-    const route = pathPart ? `root${pathPart}` : "root";
-    return route.replace(/\//g, " > ");
+    return hashIndex !== -1 ? nodeId.substring(hashIndex + 1) : "";
   };
 
   const copyPathToClipboard = () => {
     if (nodeId) {
-      navigator.clipboard.writeText(formatRoute(nodeId).replace(/ > /g, "/"));
+      navigator.clipboard.writeText(extractPath(nodeId));
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
@@ -63,7 +60,7 @@ const NodeDetailsPopup = ({
           {nodeId && (
             <div className="mb-4 p-2 bg-[var(--popup-header-bg-color)] rounded border border-[var(--popup-border-color)] flex items-center justify-between">
               <div className="overflow-x-auto max-h-[60px] overflow-y-auto pr-1 flex-1">
-                <div className="font-mono text-xs text-[var(--text-color)] whitespace-nowrap">{formatRoute(nodeId)}</div>
+                <div className="font-mono text-xs text-[var(--text-color)] whitespace-nowrap">{extractPath(nodeId)}</div>
               </div>
               <button
                 onClick={copyPathToClipboard}
