@@ -390,14 +390,33 @@ const GraphView = ({
         </div>
       )}
       <div className="absolute bottom-[10px] left-[50px] flex items-center gap-2">
-        <input
-          type="text"
-          maxLength={30}
-          placeholder="search node"
-          className="outline-none text-[var(--text-color)] border-b-2 border-[var(--text-color)] text-center w-[150px]"
-          onChange={handleChange}
-        />
+        <div className="relative">
+          <input
+            type="text"
+            maxLength={30}
+            placeholder="search node"
+            className="outline-none text-[var(--text-color)] border-b-2 border-[var(--text-color)] text-center w-[150px] pr-5"
+            value={searchString}
+            onChange={handleChange}
+          />
 
+          {searchString && (
+            <button
+              onClick={() => {
+                setSearchString("");
+                setMatchedNodes([]);
+                setCurrentMatchIndex(0);
+                setErrorMessage("");
+                setNodes((nds) => nds.map((n) => ({ ...n, selected: false })));
+                fitView({ duration: 500, padding: 0.05 });
+              }}
+              className="absolute right-0 top-1/2 -translate-y-1/2 text-[var(--text-color)] hover:opacity-70"
+              title="Clear search"
+            >
+              <CgClose size={14} />
+            </button>
+          )}
+        </div>
         {/* Change 22: Show navigation controls only when there are multiple matches */}
         {matchCount > 1 && (
           <div className="flex items-center gap-1 bg-[var(--node-bg-color)] px-2 py-1 rounded border border-[var(--text-color)] opacity-80">
