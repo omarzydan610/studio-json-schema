@@ -1,4 +1,12 @@
-import { useCallback, useEffect, useState, useMemo, useRef } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  useMemo,
+  useContext,
+  useRef,
+} from "react";
+import { AppContext } from "../contexts/AppContext";
 import type { CompiledSchema } from "@hyperjump/json-schema/experimental";
 import "@xyflow/react/dist/style.css";
 import dagre from "@dagrejs/dagre";
@@ -16,6 +24,7 @@ import {
 
 import CustomNode from "./CustomReactFlowNode";
 import NodeDetailsPopup from "./NodeDetailsPopup";
+
 import {
   processAST,
   type GraphEdge,
@@ -39,32 +48,9 @@ const GraphView = ({
 }: {
   compiledSchema: CompiledSchema | null;
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const { setCenter, getZoom, fitView } = useReactFlow();
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    let timeoutId: ReturnType<typeof setTimeout>;
-
-    const observer = new ResizeObserver(() => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        fitView({ duration: 300, padding: 0.05 });
-      }, 100);
-    });
-
-    observer.observe(containerRef.current);
-
-    return () => {
-      observer.disconnect();
-      clearTimeout(timeoutId);
-    };
-  }, [fitView]);
-  const [expandedNode, setExpandedNode] = useState<{
-    nodeId: string;
-    data: Record<string, unknown>;
-  } | null>(null);
+  const { selectedNode, setSelectedNode } = useContext(AppContext);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const [nodes, setNodes, onNodeChange] = useNodesState<GraphNode>([]);
   const [edges, setEdges, onEdgeChange] = useEdgesState<GraphEdge>([]);
@@ -112,18 +98,17 @@ const GraphView = ({
   }, []);
 
   const onNodeClick: NodeMouseHandler = useCallback((_event, node) => {
-    setExpandedNode({
-      nodeId: node.id,
+    setSelectedNode({
+      id: node.id,
       data: node.data,
     });
-
     // Select connected edges programmatically to allow native selection handling
     setEdges((eds) =>
       eds.map((edge) => {
         const isConnected = edge.source === node.id || edge.target === node.id;
         return {
           ...edge,
-          selected: isConnected
+          selected: isConnected,
         };
       })
     );
@@ -283,6 +268,26 @@ const GraphView = ({
   }, [errorMessage]);
 
   useEffect(() => {
+    if (!containerRef.current) return;
+
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    const observer = new ResizeObserver(() => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        fitView({ duration: 800, padding: 0.05 });
+      }, 100);
+    });
+
+    observer.observe(containerRef.current);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
+  useEffect(() => {
     const trimmed = searchString.trim();
 
     const timeout = setTimeout(() => {
@@ -337,12 +342,13 @@ const GraphView = ({
         onEdgesChange={onEdgeChange}
         deleteKeyCode={null}
         nodeTypes={nodeTypes}
-        fitView
         minZoom={0.05}
         maxZoom={5}
         onEdgeMouseEnter={(_, edge) => setHoveredEdgeId(edge.id)}
         onEdgeMouseLeave={() => setHoveredEdgeId(null)}
-        onPaneClick={() => setExpandedNode(null)}
+        onPaneClick={() => {
+          setSelectedNode(null);
+        }}
       >
         <Background
           id="main-grid"
@@ -361,10 +367,12 @@ const GraphView = ({
         <Controls />
       </ReactFlow>
 
-      {expandedNode && (
+      {selectedNode && (
         <NodeDetailsPopup
-          data={expandedNode.data}
-          onClose={() => setExpandedNode(null)}
+          data={selectedNode.data}
+          onClose={() => {
+            setSelectedNode(null);
+          }}
         />
       )}
       {/*Error Message */}
