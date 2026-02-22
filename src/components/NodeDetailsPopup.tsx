@@ -7,7 +7,7 @@ const NodeDetailsPopup = ({
   data,
   onClose,
 }: {
-  nodeId?: string;
+  nodeId: string;
   data: {
     nodeData?: NodeData;
   };
@@ -17,7 +17,8 @@ const NodeDetailsPopup = ({
 
   const extractPath = (nodeId: string) => {
     const hashIndex = nodeId.indexOf("#");
-    return hashIndex !== -1 ? nodeId.substring(hashIndex + 1) : "";
+    const fragment = hashIndex !== -1 ? nodeId.substring(hashIndex + 1) : "";
+    return fragment || "/";
   };
 
   const copyPathToClipboard = () => {
