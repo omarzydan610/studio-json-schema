@@ -73,7 +73,6 @@ const loadSchemaFromLocalStorage = (): unknown | null => {
 export const loadInitialSchema = (defaultSchema: unknown) => {
   const schemaFromUrl = decodeSchemaFromShareURL();
   if (schemaFromUrl !== null) {
-    saveSchemaToLocalStorage(schemaFromUrl);
     return schemaFromUrl;
   }
 
