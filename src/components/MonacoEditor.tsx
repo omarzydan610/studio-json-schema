@@ -209,7 +209,7 @@ const MonacoEditor = () => {
   const copySchemaUrl = useCallback(async () => {
     try {
       const parsedSchema = parseSchema(schemaText, schemaFormat);
-      const link = encodeSchemaToShareURL(parsedSchema);
+      const link = encodeSchemaToShareURL(parsedSchema, schemaFormat);
       await navigator.clipboard.writeText(link);
       return true;
     } catch {

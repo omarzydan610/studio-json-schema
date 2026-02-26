@@ -6,6 +6,7 @@ import {
   type ReactNode,
 } from "react";
 import { AppContext, type SchemaFormat, type SelectedNode } from "./AppContext";
+import { loadSchemaFormatFromShareURL } from "../utils/schemaShare";
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -19,11 +20,15 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       : "light";
   });
 
-  const [schemaFormat, setSchemaFormat] = useState<SchemaFormat>(
-    (window.sessionStorage.getItem(
-      "ioflux.schema.editor.format"
-    ) as SchemaFormat) ?? "json"
-  );
+  const [schemaFormat, setSchemaFormat] = useState<SchemaFormat>(() => {
+    const formatFromShareURL = loadSchemaFormatFromShareURL();
+    if (formatFromShareURL) return formatFromShareURL;
+
+    const savedFormat = window.sessionStorage.getItem("ioflux.schema.editor.format");
+    if (savedFormat === "json" || savedFormat === "yaml") return savedFormat;
+
+    return "json";
+  });
 
   const toggleTheme = () => {
     setTheme((prev) => {

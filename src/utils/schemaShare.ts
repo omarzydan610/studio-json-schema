@@ -1,7 +1,10 @@
 import { strFromU8, strToU8, unzlibSync, zlibSync } from "fflate";
 
 const SHARE_SCHEMA_PARAM = "schema";
+const SHARE_SCHEMA_FORMAT_PARAM = "sf";
 const LOCAL_SCHEMA_STORAGE_KEY = "ioflux.schema.editor.content";
+
+export type SharedSchemaFormat = "json" | "yaml";
 
 const toBase64Url = (bytes: Uint8Array) => {
   let binary = "";
@@ -31,15 +34,31 @@ const fromBase64Url = (value: string) => {
   return out;
 };
 
-export const encodeSchemaToShareURL = (schema: unknown, href = window.location.href) => {
+export const encodeSchemaToShareURL = (
+  schema: unknown,
+  format: SharedSchemaFormat,
+  href = window.location.href
+) => {
   const json = JSON.stringify(schema);
   const compressed = zlibSync(strToU8(json));
   const payload = toBase64Url(compressed);
 
   const url = new URL(href);
   url.searchParams.set(SHARE_SCHEMA_PARAM, payload);
+  url.searchParams.set(SHARE_SCHEMA_FORMAT_PARAM, format === "yaml" ? "y" : "j");
 
   return url.toString();
+};
+
+export const loadSchemaFormatFromShareURL = (
+  href = window.location.href
+): SharedSchemaFormat | null => {
+  const format = new URL(href).searchParams.get(SHARE_SCHEMA_FORMAT_PARAM);
+
+  if (format === "y") return "yaml";
+  if (format === "j") return "json";
+
+  return null;
 };
 
 export const decodeSchemaFromShareURL = (href = window.location.href): unknown | null => {
